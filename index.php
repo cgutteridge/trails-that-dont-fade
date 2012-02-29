@@ -20,7 +20,7 @@ if( @$_GET['node'] ) { $page = $_GET['node']; }
 function winComment( win )
 {
 	url = "getcomment.php?";
-	openWindow( win, url, 'v' );
+	openWindow( win, url, { dir: 'v' } );
 }
 // like collapse with no anim
 function winHide( win )
@@ -180,8 +180,10 @@ position:absolute; left:5px; top:5px;
 <div class='title'>Tools</div>
 <div class='content'>
 <div>Wikipedia: <input id='wikinode' value='Project Xanadu' /> <a href='javascript:openWikiPage( null, document.getElementById("wikinode").value )'>open</a></div>
-<div>Youtube: <input id='youtube' value='http://www.youtube.com/watch?v=7_J7XOdB3zk' /> <a href='javascript:openYouTubePage( null, document.getElementById("youtube").value )'>open</a></div>
 <div>SPARQL Endpoint: <input id='endpoint' value='http://sparql.data.southampton.ac.uk/' /> <a href='javascript:openEndpointPage( null, document.getElementById("endpoint").value )'>open</a></div>
+<p>The next items are extra-experimental</p>
+<div>Youtube: <input id='youtube' value='http://www.youtube.com/watch?v=7_J7XOdB3zk' /> <a href='javascript:openYouTubePage( null, document.getElementById("youtube").value )'>open</a></div>
+<div><a href='javascript:open253Page( null, "http://www.ryman-novel.com/info/home.htm")'>253 Journey Planner</a></div>
 
 
 </div>
@@ -216,7 +218,7 @@ var linkslist = [];
 function openWikiSection( fromWinID, page, section ) 
 { 
 	url = "getwiki.php?page="+page+"&section="+section;
-	openWindow( fromWinID, url, 'v' );
+	openWindow( fromWinID, url, { dir: 'v' } );
 }
 function openWikiPage( fromWinID, page ) 
 { 
@@ -239,22 +241,29 @@ function openSPARQLPage( fromWinID, endpoint, uri, type )
 	if( type ) { url += "&type="+type; }
 	openWindow( fromWinID, url );
 }
+function open253Page( fromWinID, url )
+{ 
+	url = "http://lemur.ecs.soton.ac.uk/~cjg/wiki-explorer/get253.php?url="+encodeURIComponent(url);
+	openWindow( fromWinID, url, { width: 500, fromSize: 'terse' } );
+}
 
-
-
-function openWindow( fromWinID, url, dir )
+function openWindow( fromWinID, url, opts )
 {
-	if( !dir ) { $dir = "h"; }
+	if( !opts ) { opts = {}; }
+	if( !opts['dir'] ) { opts['dir'] = "h"; }
+	if( !opts['fromSize'] ) { opts['fromSize'] = "hide"; }
+
 	winCounter++;
 	url += "&win="+winCounter;
 	$('#windows').append('<div style="" id="win'+winCounter+'" class="window"></div>' );
 	var newWin = $('#win'+winCounter );
 	var fromWin = $('#win'+fromWinID );
 	if( fromWinID ) { 
-		winHide( fromWinID );
+		if( opts['fromSize'] = "hide" ) { winHide( fromWinID ); }
+		if( opts['fromSize'] = "terse" ) { winTerse( fromWinID ); }
 		linkslist.push(  [ fromWinID, winCounter ] );
 		pos = fromWin.position();
-		if( dir == 'v' ) 
+		if( opts['dir'] == 'v' ) 
 		{ 
 			newWin.css('left', pos['left' ] );
 			newWin.css('top', pos['top' ] + fromWin.height()+40);
@@ -284,6 +293,10 @@ function openWindow( fromWinID, url, dir )
 				stop: function(event, ui) { drawLines(); }
 			});
 			//newWin.css( "border", "solid 2px green" );
+			if( opts['width'] )
+			{
+				$("#winContentWrapper"+winID).css( 'width',opts['width'] );
+			}	
 			$("#winContentWrapper"+winID).resizable();
   			drawLines();
 			pos = newWin.position();
