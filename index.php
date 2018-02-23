@@ -56,15 +56,12 @@ function winFull( win )
 
 function drawLines()
 {
-  document.getElementById('background').style.backgroundColor = "#008888";
+  //document.getElementById('background').style.backgroundColor = "#008888";
   var canvas = document.getElementById("background");
   var context = canvas.getContext("2d");
-  context.beginPath();
-  context.rect(0,0,4000,4000);
-  context.fillStyle = "#8ED6FF";
-  //context.strokeStyle = "#8ED6FF";
+  context.clearRect( 0,0, 4000,4000);
+
   context.lineWidth = 3;
-  context.fill();
   context.beginPath();
   for (i in linkslist) 
   {
@@ -150,7 +147,6 @@ function joinWindows( a, b )
  // context.lineTo(mid_b['x'], mid_b['y']);
 }
 
-//#background { background-color: yellow; }
    </script>
 	<style type="text/css">
 	body { background-color: #c0c0c0; margin: 0px; height: 100%; }
@@ -160,11 +156,13 @@ position:absolute; left:5px; top:5px;
   -webkit-box-shadow: 6px 6px 5px 3px rgba(0,0,0,0.3);
   box-shadow:         6px 6px 5px 3px rgba(0,0,0,0.3);
 	}
+        #background { background: #ccffff url(graph-bg.png); }
 	.title { background-color: #333399; color: white;
 	  padding:0em 0.5em 0em 0.5em; 
 	  text-align:center;
           overflow-x: hidden;
     	}
+	.title a { color: white; cursor: pointer}
 	.content { padding: 5px 10px 10px 10px; font-size:80%; }
 	.contentWrapper { width: 400px; overflow-y: auto;overflow-x: hidden}
         .sectionWindow .content { background-color: #eee; }
@@ -174,7 +172,7 @@ position:absolute; left:5px; top:5px;
 	</style>
 </head>
  <body>
-<canvas style='background-color: #999' id='background' width='4000' height='4000' ></canvas>
+<canvas id='background' width='4000' height='4000' ></canvas>
 <div id='windows'></div>
 <div id='tools' class='window'>
 <div class='title'>Tools</div>
@@ -193,7 +191,7 @@ position:absolute; left:5px; top:5px;
 <script>
 $(document).ready(function($){
   drawLines();
-  $('#tools').draggable({ handle: $(".title"), opacity: 0.8 });
+  $('#tools').draggable({ handle: $("*"), opacity: 0.8 });
   $("#wikinode").keyup(function(event){
     if(event.keyCode == 13){
         openWikiPage( null, document.getElementById("wikinode").value);
@@ -287,7 +285,7 @@ function openWindow( fromWinID, url, opts )
     			//newWin.append("<p>"+winID+"</p>");
     			newWin.append(html);
 			newWin.draggable({
-				handle: $(".title"),
+				handle: $("*"),
 				opacity: 0.8,
 				drag: function(event, ui) { drawLines(); },
 				stop: function(event, ui) { drawLines(); }

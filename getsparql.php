@@ -68,11 +68,11 @@ if( $type == 'graphs' )
 }
 elseif( $type == 'uri' )
 {
-	$sparql = 'SELECT DISTINCT ?uri ?pred ?label WHERE {
-  	   <'.$uri.'> ?pred ?uri .
-           OPTIONAL { ?uri <http://www.w3.org/2000/01/rdf-schema#label> ?label }
-	} ORDER BY ?pred ?uri';
-
+	$sparql = 'SELECT DISTINCT ?res ?pred ?label WHERE {
+  	   <'.$uri.'> ?pred ?res .
+           OPTIONAL { ?res <http://www.w3.org/2000/01/rdf-schema#label> ?label }
+	} ORDER BY ?pred ?res';
+#print "<pre>".htmlspecialchars($sparql)."</pre>";
 	$results = sparql_get( $endpoint, $sparql ) ;
 
 	if( sizeof( $results ) )
@@ -82,7 +82,7 @@ elseif( $type == 'uri' )
 		print "<dl>";
 		foreach( $results as $result )
 		{
-  			$uri = $result['uri'];
+  			$result_res = $result['res'];
 			if( $lastpred != $result['pred'] )
 			{
 				$lastpred = $result['pred'];
@@ -90,14 +90,20 @@ elseif( $type == 'uri' )
 			}
  			print "<dd style='margin-top:0.5em'>";
 			print "&rarr; ";
- 			print "<a href='javascript:openSPARQLPage( $win, \"$endpoint\", \"$uri\", \"$nextquery\" );'>";
+			if( $result["res.type"] == "literal" ) 
+			{
+				print "\"".htmlspecialchars( $result["res"] )."\"";
+				print "</dd>";
+				continue;
+			}
+ 			print "<a href='javascript:openSPARQLPage( $win, \"$endpoint\", \"$result_res\", \"$nextquery\" );'>";
 			if( @$result['label'] != '' )
 			{
 				print $result['label'];
 			}
 			else
 			{
-				print $uri;
+				print $result_res;
 			}
 			print "</a>";
  			print "</dd>";
@@ -110,6 +116,7 @@ elseif( $type == 'uri' )
            OPTIONAL { ?uri <http://www.w3.org/2000/01/rdf-schema#label> ?label }
 	} ORDER BY ?pred ?uri';
 
+#print "<pre>".htmlspecialchars($sparql)."</pre>";
 	$results = sparql_get( $endpoint, $sparql ) ;
 
 	if( sizeof( $results ) )
@@ -119,7 +126,7 @@ elseif( $type == 'uri' )
 		print "<dl>";
 		foreach( $results as $result )
 		{
-  			$uri = $result['uri'];
+  			$result_uri = $result['uri'];
 			if( $lastpred != $result['pred'] )
 			{
 				$lastpred = $result['pred'];
@@ -127,14 +134,14 @@ elseif( $type == 'uri' )
 			}
  			print "<dd style='margin-top:0.5em'>";
 			print "&larr; ";
- 			print "<a href='javascript:openSPARQLPage( $win, \"$endpoint\", \"$uri\", \"$nextquery\" );'>";
+ 			print "<a href='javascript:openSPARQLPage( $win, \"$endpoint\", \"$result_uri\", \"$nextquery\" );'>";
 			if( @$result['label'] != '' )
 			{
 				print $result['label'];
 			}
 			else
 			{
-				print $uri;
+				print $result_uri;
 			}
 			print "</a>";
  			print "</dd>";

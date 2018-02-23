@@ -54,7 +54,7 @@ foreach( $lines as $line )
 	}
 	else
 	{
-		if( preg_match( '/<!-- bodycontent -->/', $line )) { $printing= true;}
+		if( preg_match( '/mw-content-text/', $line )) { $printing= true;}
 	}
 }
 print "</div>";
